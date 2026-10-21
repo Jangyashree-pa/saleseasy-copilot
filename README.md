@@ -2,7 +2,7 @@
 
 A small, reliability-first version of SalesEasy. It reads a free-text FMCG field-sales update and returns validated JSON: what the issue is, how urgent it is, the evidence, the next action, what information is missing, and whether a person must review it. It keeps verified facts separate from the rep's claims, and it escalates uncertain or high-impact cases.
 
-- **Live demo:** <ADD YOUR DEPLOYED URL>
+- **Live demo:** https://saleseasy-copilot.onrender.com/
 - **Demo video:** <ADD YOUR VIDEO LINK>
 - **Mode of this submission: mock mode.** The demo runs on a rules-only baseline, labelled "Mock mode" on the page. The OpenAI integration (gpt-6-luna) is built and tested, but the OpenAI account had no API credits, so real-model behaviour is not validated. See [Known limitations](#known-limitations-and-what-is-not-validated).
 - All outlets, SKUs and stock figures are fictional.
