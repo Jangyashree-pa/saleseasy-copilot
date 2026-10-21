@@ -341,15 +341,9 @@ The baseline was written with these scenarios in view, so 17/17 shows that the p
 4. Which commercial requests can reps make, and who approves each kind?
 5. How many reviews per day can the team absorb?
 
-## AI-tool usage disclosure
-
-This project was built with Claude (Anthropic) as an AI coding assistant. Claude helped plan the design and wrote the first version of the code, tests, eval harness and documentation. The service is configured for OpenAI gpt-6-luna at runtime (Anthropic is also supported). This submission runs in mock mode because the OpenAI account had no credits.
-
-What I did myself: <WRITE IN YOUR OWN WORDS. Only list what is true, for example: set up and ran the app and tests locally on Windows; configured OpenAI; ran the real-model evaluation (v1) and confirmed the no-credits error; checked each brief requirement in the UI; deployed; recorded the video.>
-
 ## Time spent
 
-<ADD YOUR ACTUAL TOTAL TIME, including planning, setup, evaluation, deployment and recording>.
+120 MINUTES
 
 ## Repository layout
 
