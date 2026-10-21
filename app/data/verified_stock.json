@@ -1,0 +1,23 @@
+{
+  "description": "Fictional verified stock data from the exercise brief. This table is the system of record: only these values count as verified facts.",
+  "rows": [
+    {"row_id": "VT-001", "outlet": "Indiranagar Mart", "sku": "Cola 500ml", "system_stock": 0},
+    {"row_id": "VT-002", "outlet": "Metro Fresh", "sku": "Cola 500ml", "system_stock": 48},
+    {"row_id": "VT-003", "outlet": "City Corner", "sku": "Juice 1L", "system_stock": 12}
+  ],
+  "outlet_aliases": {
+    "Indiranagar Mart": ["indiranagar mart", "indira nagar mart"],
+    "Metro Fresh": ["metro fresh"],
+    "City Corner": ["city corner"]
+  },
+  "sku_aliases": {
+    "Cola 500ml": {
+      "exact": ["cola 500ml", "cola 500", "500ml cola", "cola 500 ml", "cola half litre", "cola half liter"],
+      "generic": ["cola"]
+    },
+    "Juice 1L": {
+      "exact": ["juice 1l", "juice 1 litre", "juice 1 liter", "1l juice", "1 litre juice", "1 liter juice"],
+      "generic": ["juice"]
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "issue_category": "inventory_discrepancy",
+  "urgency": "medium",
+  "evidence": [
+    {
+      "source": "field_update",
+      "quote": "Metro Fresh has a stockout on Cola 500ml",
+      "span": [
+        0,
+        40
+      ],
+      "claim_type": "stock_status",
+      "status": "conflicting",
+      "compared_with_row": "VT-002",
+      "note": "Conflicts with verified data: system shows 48 units for Metro Fresh / Cola 500ml (VT-002)."
+    },
+    {
+      "source": "field_update",
+      "quote": "no bottles on the shelf or in the backroom",
+      "span": [
+        43,
+        85
+      ],
+      "claim_type": "stock_status",
+      "status": "conflicting",
+      "compared_with_row": "VT-002",
+      "note": "Conflicts with verified data: system shows 48 units for Metro Fresh / Cola 500ml (VT-002)."
+    },
+    {
+      "source": "verified_table",
+      "row_id": "VT-002",
+      "record": {
+        "outlet": "Metro Fresh",
+        "sku": "Cola 500ml",
+        "system_stock": 48
+      },
+      "status": "verified",
+      "note": "System of record (fictional verified data); linked because outlet and SKU named in the update."
+    }
+  ],
+  "recommended_next_action": {
+    "type": "verify_physical_stock",
+    "details": "Ask the rep to count Cola 500ml at Metro Fresh (shelf and backroom) and share a photo, then reconcile with the system record (48 units) before any replenishment decision."
+  },
+  "missing_information": [
+    "Physical count (shelf and backroom) with a photo",
+    "Time of the last system stock sync"
+  ],
+  "needs_human_review": true,
+  "review_reason": "Field report conflicts with verified stock (Metro Fresh / Cola 500ml: system shows 48 units). Do not act until reconciled.",
+  "meta": {
+    "request_id": "example0001",
+    "provider": "mock",
+    "model": "rules-baseline",
+    "degraded": false,
+    "llm_attempts": 1,
+    "rules_triggered": [
+      "conflicting_evidence"
+    ],
+    "policy_overrides": [],
+    "guardrail_notes": [],
+    "latency_ms": 1,
+    "analyzed_text": "Metro Fresh has a stockout on Cola 500ml - no bottles on the shelf or in the backroom. Please send stock.",
+    "version": "1.0.0"
+  }
+}

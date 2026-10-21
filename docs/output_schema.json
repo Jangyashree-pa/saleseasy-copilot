@@ -1,0 +1,358 @@
+{
+  "$defs": {
+    "ActionType": {
+      "description": "Allowed next actions.\n\nThere is deliberately no action that approves or executes a commercial\nchange (price match, discount, refund, credit) and no \"mark resolved\":\nthe copilot recommends, people decide.",
+      "enum": [
+        "request_more_info",
+        "verify_physical_stock",
+        "recommend_replenishment",
+        "reconcile_inventory_records",
+        "escalate_commercial_team",
+        "escalate_quality_safety",
+        "flag_security_review",
+        "no_action"
+      ],
+      "title": "ActionType",
+      "type": "string"
+    },
+    "ClaimType": {
+      "enum": [
+        "stock_status",
+        "sales_impact",
+        "competitor_activity",
+        "pricing_request",
+        "product_quality",
+        "health_safety",
+        "instruction_to_system",
+        "other"
+      ],
+      "title": "ClaimType",
+      "type": "string"
+    },
+    "EvidenceStatus": {
+      "enum": [
+        "verified",
+        "unverified_claim",
+        "conflicting"
+      ],
+      "title": "EvidenceStatus",
+      "type": "string"
+    },
+    "FieldUpdateEvidence": {
+      "additionalProperties": false,
+      "description": "A claim quoted verbatim from the field update.\n\n``span`` gives [start, end) character offsets into ``meta.analyzed_text``\nso every quote can be traced back to the exact text that was submitted.\n``status`` and ``note`` are computed by code, not by the model.",
+      "properties": {
+        "source": {
+          "const": "field_update",
+          "default": "field_update",
+          "title": "Source",
+          "type": "string"
+        },
+        "quote": {
+          "title": "Quote",
+          "type": "string"
+        },
+        "span": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Span",
+          "type": "array"
+        },
+        "claim_type": {
+          "$ref": "#/$defs/ClaimType"
+        },
+        "status": {
+          "$ref": "#/$defs/EvidenceStatus"
+        },
+        "compared_with_row": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compared With Row"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "quote",
+        "span",
+        "claim_type",
+        "status",
+        "note"
+      ],
+      "title": "FieldUpdateEvidence",
+      "type": "object"
+    },
+    "IssueCategory": {
+      "enum": [
+        "stock_availability",
+        "inventory_discrepancy",
+        "competitor_activity",
+        "product_quality_safety",
+        "suspicious_input",
+        "insufficient_information",
+        "other"
+      ],
+      "title": "IssueCategory",
+      "type": "string"
+    },
+    "Meta": {
+      "description": "Operational metadata. Not part of the triage decision, but makes it auditable.",
+      "properties": {
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Model"
+        },
+        "degraded": {
+          "description": "True when the LLM was unavailable or its output was rejected; rules-only triage was used.",
+          "title": "Degraded",
+          "type": "boolean"
+        },
+        "llm_attempts": {
+          "title": "Llm Attempts",
+          "type": "integer"
+        },
+        "rules_triggered": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rules Triggered",
+          "type": "array"
+        },
+        "policy_overrides": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Policy Overrides",
+          "type": "array"
+        },
+        "guardrail_notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Guardrail Notes",
+          "type": "array"
+        },
+        "latency_ms": {
+          "title": "Latency Ms",
+          "type": "integer"
+        },
+        "analyzed_text": {
+          "description": "The exact text that was analysed; evidence spans index into it.",
+          "title": "Analyzed Text",
+          "type": "string"
+        },
+        "version": {
+          "default": "1.0.0",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "provider",
+        "model",
+        "degraded",
+        "llm_attempts",
+        "rules_triggered",
+        "policy_overrides",
+        "guardrail_notes",
+        "latency_ms",
+        "analyzed_text"
+      ],
+      "title": "Meta",
+      "type": "object"
+    },
+    "NextAction": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/ActionType"
+        },
+        "details": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Details",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "details"
+      ],
+      "title": "NextAction",
+      "type": "object"
+    },
+    "StockRecord": {
+      "properties": {
+        "outlet": {
+          "title": "Outlet",
+          "type": "string"
+        },
+        "sku": {
+          "title": "Sku",
+          "type": "string"
+        },
+        "system_stock": {
+          "title": "System Stock",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "outlet",
+        "sku",
+        "system_stock"
+      ],
+      "title": "StockRecord",
+      "type": "object"
+    },
+    "Urgency": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "Urgency",
+      "type": "string"
+    },
+    "VerifiedTableEvidence": {
+      "additionalProperties": false,
+      "description": "A row from the verified stock table. Values are copied by code from the table.",
+      "properties": {
+        "source": {
+          "const": "verified_table",
+          "default": "verified_table",
+          "title": "Source",
+          "type": "string"
+        },
+        "row_id": {
+          "title": "Row Id",
+          "type": "string"
+        },
+        "record": {
+          "$ref": "#/$defs/StockRecord"
+        },
+        "status": {
+          "const": "verified",
+          "default": "verified",
+          "title": "Status",
+          "type": "string"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "row_id",
+        "record",
+        "note"
+      ],
+      "title": "VerifiedTableEvidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "issue_category": {
+      "$ref": "#/$defs/IssueCategory"
+    },
+    "urgency": {
+      "$ref": "#/$defs/Urgency"
+    },
+    "evidence": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "field_update": "#/$defs/FieldUpdateEvidence",
+            "verified_table": "#/$defs/VerifiedTableEvidence"
+          },
+          "propertyName": "source"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/FieldUpdateEvidence"
+          },
+          {
+            "$ref": "#/$defs/VerifiedTableEvidence"
+          }
+        ]
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "recommended_next_action": {
+      "$ref": "#/$defs/NextAction"
+    },
+    "missing_information": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 5,
+      "title": "Missing Information",
+      "type": "array"
+    },
+    "needs_human_review": {
+      "title": "Needs Human Review",
+      "type": "boolean"
+    },
+    "review_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Review Reason"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    }
+  },
+  "required": [
+    "issue_category",
+    "urgency",
+    "evidence",
+    "recommended_next_action",
+    "missing_information",
+    "needs_human_review",
+    "review_reason",
+    "meta"
+  ],
+  "title": "TriageResult",
+  "type": "object"
+}

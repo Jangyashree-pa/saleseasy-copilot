@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SalesEasy Copilot</title>
+  <meta name="description" content="Triage FMCG field-sales updates into checked, evidence-backed JSON with human-review escalation. Fictional data.">
+  <link rel="preload" href="/static/fonts/mukta-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead__inner">
+      <div>
+        <h1 class="product">SalesEasy Copilot</h1>
+        <p class="tagline">Reads a field rep's update, checks it against verified stock, and flags what a person must review.</p>
+      </div>
+      <div class="mode" id="mode" aria-live="polite">
+        <span class="mode__label" id="mode-label">Connecting…</span>
+        <span class="mode__note">Fictional data only</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="intake" aria-labelledby="intake-title">
+      <h2 id="intake-title" class="visually-hidden">Field update input</h2>
+      <form id="analyze-form" novalidate>
+        <label class="field-label" for="update">Field update</label>
+        <textarea id="update" name="text" rows="7" maxlength="2000" spellcheck="false"
+          placeholder="Paste a rep's message, for example: Metro Fresh is out of Cola 500ml since morning."></textarea>
+        <p class="counter" id="counter">0 of 2,000 characters</p>
+
+        <div class="failure" id="failure-wrap" hidden>
+          <label class="field-label" for="failure">Simulate an LLM failure</label>
+          <select id="failure" name="simulate_failure">
+            <option value="">None</option>
+            <option value="timeout">Timeout</option>
+            <option value="unavailable">Service unavailable</option>
+            <option value="invalid_json">Malformed JSON on both attempts</option>
+            <option value="schema_violation">Values outside the contract</option>
+            <option value="flaky_json">Malformed once, then repaired</option>
+          </select>
+        </div>
+
+        <button type="submit" class="primary" id="submit">Analyze update</button>
+        <p class="error" id="error" role="alert" hidden></p>
+      </form>
+
+      <h2 class="section-title">Try a sample update</h2>
+      <ul class="samples" id="samples"></ul>
+
+      <h2 class="section-title">Verified stock (system of record)</h2>
+      <table class="stock">
+        <thead><tr><th scope="col">Row</th><th scope="col">Outlet</th><th scope="col">SKU</th><th scope="col" class="num">Units</th></tr></thead>
+        <tbody id="stock-rows"></tbody>
+      </table>
+    </section>
+
+    <section class="sheet" id="result" aria-live="polite" aria-labelledby="result-title">
+      <h2 id="result-title" class="visually-hidden">Triage result</h2>
+      <div class="empty" id="empty">
+        <p class="empty__lead">Results appear here.</p>
+        <p>Pick a sample or paste an update, then select <strong>Analyze update</strong>. Every quote in the result links back to the exact words in the update.</p>
+      </div>
+
+      <div id="output" hidden>
+        <div class="verdict">
+          <div class="stamp" id="stamp"></div>
+          <dl class="facts">
+            <div><dt>Urgency</dt><dd><span class="urgency" id="urgency"></span></dd></div>
+            <div><dt>Category</dt><dd id="category"></dd></div>
+          </dl>
+        </div>
+        <p class="degraded" id="degraded" hidden></p>
+        <p class="reason" id="reason" hidden></p>
+
+        <h3 class="block-title">The update, annotated</h3>
+        <blockquote class="annotated" id="annotated"></blockquote>
+        <ul class="legend" aria-label="Legend">
+          <li><mark class="ev ev--verified">Verified</mark> matches the system of record</li>
+          <li><mark class="ev ev--unverified_claim">Unverified claim</mark> the rep says so; not checkable</li>
+          <li><mark class="ev ev--conflicting">Conflicts</mark> contradicts the system of record</li>
+        </ul>
+
+        <h3 class="block-title">Recommended next action</h3>
+        <p class="action"><span class="action__type" id="action-type"></span> <code id="action-code"></code></p>
+        <p class="action__details" id="action-details"></p>
+
+        <h3 class="block-title">Missing information</h3>
+        <ul class="missing" id="missing"></ul>
+
+        <h3 class="block-title">Evidence</h3>
+        <ol class="evidence" id="evidence"></ol>
+
+        <h3 class="block-title">Audit trail</h3>
+        <dl class="audit" id="audit"></dl>
+
+        <details class="raw">
+          <summary>Raw JSON response</summary>
+          <pre id="raw"></pre>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Demo for an engineering exercise. All outlets, SKUs and stock figures are fictional. The API is documented at <a href="/docs">/docs</a>.</p>
+  </footer>
+</body>
+</html>
